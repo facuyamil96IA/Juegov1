@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protocolo Cero</title>
+    <title>Protocolo Cero - Gráficos</title>
     <style>
         :root {
-            --glass: rgba(255, 255, 255, 0.1);
-            --accent: #d2b48c; /* Color Oak */
-            --bg: #0d0d0d;
+            /* Colores base para la interfaz (Oak & Linen) */
+            --glass-bg: rgba(13, 13, 13, 0.6); /* Más oscuro para contraste */
+            --accent-oak: #d2b48c; /* Marrón roble claro */
+            --linen-text: #f3e5dc; /* Lino muy claro */
+            --glass-border: rgba(210, 180, 140, 0.3);
         }
 
         body {
             margin: 0;
-            background: var(--bg);
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            background: #000;
+            color: var(--linen-text);
+            font-family: 'Montserrat', sans-serif; /* Usamos una fuente más moderna */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,115 +26,198 @@
             overflow: hidden;
         }
 
-        /* Estética Glassmorphism */
+        /* Contenedor de la Imagen de Fondo */
+        #bg-image-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.8s ease-in-out; /* Transición suave */
+            z-index: -1;
+            filter: grayscale(20%) brightness(70%); /* Estilo cinemático */
+        }
+
+        /* Degradado oscuro para integrar la UI */
+        #bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%);
+            z-index: 0;
+        }
+
+        /* Contenedor del Juego (UI Glassmorphism) */
         #game-container {
             width: 90%;
-            max-width: 400px;
-            padding: 2rem;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            max-width: 420px;
+            padding: 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); /* Efecto cristal */
+            -webkit-backdrop-filter: blur(12px); /* Soporte iOS */
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
             text-align: center;
+            z-index: 10;
+            box-sizing: border-box;
         }
 
+        /* Panel de Estadísticas */
         .stats {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            font-size: 0.8rem;
-            color: var(--accent);
+            justify-content: space-between;
+            margin-bottom: 25px;
+            font-size: 0.75rem;
+            color: var(--accent-oak);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
         }
 
+        .stat-value {
+            color: var(--linen-text);
+            font-weight: bold;
+        }
+
+        /* Texto de la Historia */
         #text {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            min-height: 120px;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            min-height: 140px;
+            font-weight: 300;
         }
 
+        /* Botones de Opciones */
         .options-btn {
             display: block;
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--accent);
-            color: white;
-            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+            background: rgba(210, 180, 140, 0.05); /* Toque Oak sutil */
+            border: 1px solid rgba(210, 180, 140, 0.4);
+            color: var(--linen-text);
+            border-radius: 12px;
             cursor: pointer;
+            font-size: 0.95rem;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
 
-        .options-btn:active {
-            background: var(--accent);
-            color: var(--bg);
+        /* Hover/Active para móviles */
+        .options-btn:active, .options-btn:hover {
+            background: var(--accent-oak);
+            color: #0d0d0d;
+            box-shadow: 0 0 15px rgba(210, 180, 140, 0.5);
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+<div id="bg-image-container"></div>
+<div id="bg-overlay"></div>
+
 <div id="game-container">
     <div class="stats">
-        <div>Energía: <span id="energy">100</span>%</div>
-        <div>Oxígeno: <span id="oxigen">100</span>%</div>
+        <div>Energía: <span id="energy" class="stat-value">100</span>%</div>
+        <div>Oxígeno: <span id="oxigen" class="stat-value">100</span>%</div>
     </div>
     
-    <div id="text">Cargando sistema...</div>
+    <div id="text">Iniciando protocolo de supervivencia...</div>
     <div id="options"></div>
 </div>
 
 <script>
+    // Variables de estado
     let state = { energy: 100, oxigen: 100 };
 
+    // Definición de la Historia con Gráficos (imageURL)
     const storyNodes = [
         {
             id: 1,
-            text: "Día 1: Una tormenta electromagnética golpea el búnker. Las luces parpadean. El generador principal falla.",
+            text: "Día 1: Una tormenta electromagnética golpea el búnker. Las luces parpadean. El generador principal falla. La oscuridad te rodea.",
+            // Imagen: Búnker oscuro, luces rojas
+            imageURL: 'https://images.unsplash.com/photo-1599723233854-9781830601f0?q=80&w=600&auto=format&fit=crop',
             options: [
                 {
                     text: "Forzar generador (Gasta energía)",
                     nextText: 2,
-                    setState: { energy: -20 }
+                    setState: { energy: -20, oxigen: 0 }
                 },
                 {
-                    text: "Cortar ventilación (Ahorra energía, gasta oxígeno)",
+                    text: "Cortar ventilación (Gasta oxígeno)",
                     nextText: 3,
-                    setState: { oxigen: -30 }
+                    setState: { energy: 0, oxigen: -30 }
                 }
             ]
         },
         {
             id: 2,
-            text: "El generador ruge y se estabiliza, pero el calor aumenta. Escuchas golpes en la escotilla exterior.",
+            text: "El generador ruge y se estabiliza. La energía vuelve, pero el calor aumenta rápidamente. Escuchas golpes metálicos en la escotilla exterior...",
+            // Imagen: Pasillo de búnker iluminado con cables
+            imageURL: 'https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=600&auto=format&fit=crop',
             options: [
                 { text: "Abrir escotilla", nextText: 4 },
-                { text: "Ignorar y asegurar sellos", nextText: 5 }
+                { text: "Asegurar sellos y armar trampa", nextText: 5, setState: { energy: -10, oxigen: -5 } }
             ]
         },
         {
             id: 3,
-            text: "El silencio es absoluto. El aire se vuelve pesado. De repente, una alarma roja se activa: fuga en el sector B.",
+            text: "El silencio es absoluto. El aire se vuelve pesado y frío. De repente, una alarma roja parpadea en el panel central: 'FUGA CRÍTICA DETECTADA EN SECTOR B'.",
+            // Imagen: Sala de control abandonada con monitores
+            imageURL: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=600&auto=format&fit=crop',
             options: [
-                { text: "Reparar solo", nextText: 5 },
-                { text: "Enviar dron (Gasta energía)", nextText: 6, setState: { energy: -10 } }
+                { text: "Reparar la fuga manualmente", nextText: 5, setState: { energy: -15, oxigen: -10 } },
+                { text: "Sellar Sector B permanentemente", nextText: 6, setState: { energy: -5, oxigen: -20 } }
+            ]
+        },
+        // Nodo de muerte (Ejemplo)
+        {
+            id: 4,
+            text: "SISTEMA CRÍTICO: Una figura borrosa te ataca. No estabas preparado. Has muerto.",
+            imageURL: 'https://images.unsplash.com/photo-1584281722501-c52998f45b54?q=80&w=600&auto=format&fit=crop',
+            options: [
+                { text: "Reiniciar Protocolo", nextText: 1, reset: true }
+            ]
+        },
+         {
+            id: 5,
+            text: "SISTEMA CRÍTICO: Las decisiones acumuladas han agotado tus recursos. El búnker se convierte en tu tumba.",
+            imageURL: 'https://images.unsplash.com/photo-1584281722501-c52998f45b54?q=80&w=600&auto=format&fit=crop',
+            options: [
+                { text: "Reiniciar Protocolo", nextText: 1, reset: true }
             ]
         }
-        // Aquí irán más nodos...
     ];
 
+    // Funciones del Motor de Juego
     function startGame() {
+        state = { energy: 100, oxigen: 100 }; // Reiniciar estado
         showTextNode(1);
     }
 
     function showTextNode(textNodeIndex) {
         const textNode = storyNodes.find(node => node.id === textNodeIndex);
+        
+        // 1. Actualizar el Texto
         document.getElementById('text').innerText = textNode.text;
         
+        // 2. Actualizar el Gráfico de Fondo con transición
+        const bgContainer = document.getElementById('bg-image-container');
+        if (textNode.imageURL) {
+            bgContainer.style.backgroundImage = `url('${textNode.imageURL}')`;
+        }
+
+        // 3. Renderizar las Opciones
         const optionsContainer = document.getElementById('options');
         optionsContainer.innerHTML = '';
 
@@ -147,25 +233,42 @@
     }
 
     function selectOption(option) {
+        // Manejar el reinicio
+        if (option.reset) {
+            startGame();
+            return;
+        }
+
+        // Aplicar cambios de estado
         if (option.setState) {
             state.energy += option.setState.energy || 0;
             state.oxigen += option.setState.oxigen || 0;
         }
         
+        // Verificar condiciones de muerte por recursos
         if (state.energy <= 0 || state.oxigen <= 0) {
-            alert("SISTEMA CRÍTICO: Has muerto.");
-            location.reload();
+            showTextNode(5); // Ir al nodo de muerte por recursos
             return;
         }
 
+        // Siguiente nodo de la historia
         showTextNode(option.nextText);
     }
 
     function updateUI() {
+        // Actualizar valores numéricos
         document.getElementById('energy').innerText = state.energy;
         document.getElementById('oxigen').innerText = state.oxigen;
+
+        // Feedback visual si los recursos son bajos
+        if (state.energy < 30) document.getElementById('energy').style.color = '#ff4444';
+        else document.getElementById('energy').style.color = 'var(--linen-text)';
+
+        if (state.oxigen < 30) document.getElementById('oxigen').style.color = '#ff4444';
+        else document.getElementById('oxigen').style.color = 'var(--linen-text)';
     }
 
+    // Iniciar el juego
     startGame();
 </script>
 
