@@ -3,89 +3,144 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nocturnal Gnostic Temple VR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.1/nipplejs.min.js"></script>
     <style>
+      body { margin: 0; overflow: hidden; background-color: #050505; }
       #joystick-zone {
         position: absolute;
-        bottom: 50px;
-        left: 50px;
-        width: 120px;
-        height: 120px;
-        z-index: 10;
+        bottom: 40px;
+        left: 40px;
+        width: 150px;
+        height: 150px;
+        z-index: 20;
         touch-action: none;
-        opacity: 0.6;
+        opacity: 0.7;
       }
-      /* Viñeta para dar profundidad visual */
-      .vignette {
+      /* Viñeta para profundidad visual nocturna */
+      .ui-overlay {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        box-shadow: inset 0 0 150px rgba(0,0,0,0.3);
+        box-shadow: inset 0 0 150px rgba(0,0,0,0.8);
         pointer-events: none;
-        z-index: 5;
+        z-index: 10;
       }
     </style>
   </head>
   <body>
-    <div class="vignette"></div>
+    <div class="ui-overlay"></div>
     <div id="joystick-zone"></div>
 
-    <a-scene fog="type: exponential; color: #e8e4de; density: 0.08" renderer="colorManagement: true; antialias: true;">
+    <a-scene fog="type: exponential; color: #050505; density: 0.12" renderer="colorManagement: true; antialias: true;">
       
       <a-assets>
-        <img id="grain" src="https://www.transparenttextures.com/patterns/white-sand.png">
+        <img id="darkstone" src="https://www.transparenttextures.com/patterns/dark-dotted-2.png">
       </a-assets>
 
       <a-entity id="rig" position="0 0 12">
         <a-entity id="camera" camera look-controls position="0 1.6 0">
-          <a-cursor color="#5d4037" scale="0.3 0.3 0.3"></a-cursor>
+          <a-cursor color="#ff9f43" scale="0.3 0.3 0.3" fuse="false"></a-cursor>
         </a-entity>
       </a-entity>
 
-      <a-light type="ambient" color="#fff" intensity="0.4"></a-light>
-      <a-light type="directional" color="#ffd1a3" intensity="1.2" position="2 10 5" castShadow="true"></a-light>
+      <a-light type="ambient" color="#111" intensity="0.2"></a-light>
+      
+      <a-light type="directional" color="#a3bffa" intensity="0.3" position="-5 15 -5"></a-light>
 
-      <a-box position="0 -0.5 -5" width="20" height="1" depth="30" color="#f7f3f0" material="src: #grain; repeat: 10 10"></a-box>
+      <a-box position="0 -0.5 -10" width="16" height="1" depth="40" color="#222" material="src: #darkstone; repeat: 10 20" shadow="receive: true"></a-box>
 
-      <a-entity id="columnas" position="0 0 -5">
-        <a-box position="-6 4 -10" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
-        <a-box position="-6 4 -5" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
-        <a-box position="-6 4 0" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
-        <a-box position="-6 4 5" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
+      <a-entity id="temple-structure">
         
-        <a-box position="6 4 -10" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
-        <a-box position="6 4 -5" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
-        <a-box position="6 4 0" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
-        <a-box position="6 4 5" width="0.4" height="8" depth="0.4" color="#dccfbe"></a-box>
+        <a-mixin id="columna-dark" geometry="primitive: box; width: 0.6; height: 8; depth: 0.6" color="#333" material="src: #darkstone; repeat: 1 4"></a-mixin>
+        <a-mixin id="cruz-sutil" geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.02" color="#ff9f43" material="emissive: #ff9f43; emissiveIntensity: 0.5"></a-mixin>
+        <a-mixin id="fuego-luz" light="type: point; color: #ff9f43; intensity: 1; distance: 10; castShadow: true" animation="property: light.intensity; from: 0.8; to: 1.2; dur: 300; loop: true; dir: alternate; easing: linear"></a-mixin>
+
+        <a-entity position="-5 4 -25">
+          <a-entity mixin="columna-dark"></a-entity>
+          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
+          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
+          <a-cylinder position="0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
+          <a-sphere position="0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
+          <a-entity mixin="fuego-luz" position="0.4 1.6 0.4"></a-entity>
+        </a-entity>
+
+        <a-entity position="-5 4 -15">
+          <a-entity mixin="columna-dark"></a-entity>
+          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
+          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
+          <a-cylinder position="0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
+          <a-sphere position="0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
+          <a-entity mixin="fuego-luz" position="0.4 1.6 0.4"></a-entity>
+        </a-entity>
+
+        <a-entity position="-5 4 -5">
+          <a-entity mixin="columna-dark"></a-entity>
+          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
+          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
+          <a-cylinder position="0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
+          <a-sphere position="0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
+          <a-entity mixin="fuego-luz" position="0.4 1.6 0.4"></a-entity>
+        </a-entity>
+
+        <a-entity position="5 4 -25">
+          <a-entity mixin="columna-dark"></a-entity>
+          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
+          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
+          <a-cylinder position="-0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
+          <a-sphere position="-0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
+          <a-entity mixin="fuego-luz" position="-0.4 1.6 0.4"></a-entity>
+        </a-entity>
+
+        <a-entity position="5 4 -15">
+          <a-entity mixin="columna-dark"></a-entity>
+          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
+          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
+          <a-cylinder position="-0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
+          <a-sphere position="-0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
+          <a-entity mixin="fuego-luz" position="-0.4 1.6 0.4"></a-entity>
+        </a-entity>
+
+        <a-entity position="5 4 -5">
+          <a-entity mixin="columna-dark"></a-entity>
+          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
+          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
+          <a-cylinder position="-0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
+          <a-sphere position="-0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
+          <a-entity mixin="fuego-luz" position="-0.4 1.6 0.4"></a-entity>
+        </a-entity>
+
+        <a-box position="0 8 -15" width="10.5" height="0.3" depth="30" color="#222" opacity="0.95"></a-box>
       </a-entity>
 
-      <a-entity id="roof" position="0 8 -5">
-        <a-box position="-4 0 0" width="5" height="0.2" depth="25" color="#fff"></a-box>
-        <a-box position="4 0 0" width="5" height="0.2" depth="25" color="#fff"></a-box>
-        <a-box position="0 0 -10" width="3" height="0.2" depth="5" color="#fff"></a-box>
-        <a-box position="0 0 10" width="3" height="0.2" depth="5" color="#fff"></a-box>
+      <a-entity id="altar-cruz" position="0 1.2 -20">
+        <a-box width="2.5" height="2.5" depth="2.5" 
+               material="color: #444; opacity: 0.1; transparent: true; metalness: 0.9; roughness: 0"
+               animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
+        </a-box>
+        
+        <a-entity id="gnostic-cross" position="0 0 0" scale="1.5 1.5 1.5" animation="property: position; y: 0.2; loop: true; dir: alternate; dur: 1500; easing: easeInOutSine">
+          <a-box width="0.2" height="2" depth="0.2" color="#ff9f43" material="emissive: #ff9f43; emissiveIntensity: 2"></a-box>
+          <a-box width="1.4" height="0.2" depth="0.2" color="#ff9f43" position="0 0.4 0" material="emissive: #ff9f43; emissiveIntensity: 2"></a-box>
+          <a-light type="point" color="#ff9f43" intensity="1.5" distance="15"></a-light>
+        </a-entity>
       </a-entity>
 
-      <a-box position="0 1.2 -15" width="2" height="2" depth="2" 
-             material="color: #ffffff; opacity: 0.15; transparent: true; metalness: 0.6; roughness: 0"
-             animation="property: rotation; to: 0 360 0; loop: true; dur: 12000; easing: linear">
-      </a-box>
-
-      <a-sky color="#e8e4de"></a-sky>
+      <a-sky color="#000"></a-sky>
     </a-scene>
 
     <script>
+      // Lógica de movimiento (Mantenida de la versión anterior corregida)
       const rig = document.querySelector('#rig');
       const camera = document.querySelector('#camera');
       let moveForward = 0;
       let moveSideways = 0;
 
-      // Configuración del Joystick
       const manager = nipplejs.create({
         zone: document.getElementById('joystick-zone'),
         mode: 'static',
-        position: { left: '60px', bottom: '60px' },
-        color: '#5d4037',
+        position: { left: '75px', bottom: '75px' },
+        color: '#ff9f43', // Color naranja fuego para el joystick
         size: 100
       });
 
@@ -94,9 +149,9 @@
           const force = data.force > 1 ? 1 : data.force;
           const angle = data.angle.radian;
           
-          // CORRECCIÓN: Invertimos los senos/cosenos para que el movimiento sea natural
-          moveForward = Math.sin(angle) * force * 0.18; 
-          moveSideways = -Math.cos(angle) * force * 0.18;
+          // Lógica de dirección corregida y natural
+          moveForward = Math.sin(angle) * force; 
+          moveSideways = -Math.cos(angle) * force;
         }
       });
 
@@ -105,27 +160,26 @@
         moveSideways = 0;
       });
 
-      function tick() {
+      const speed = 0.18; // Velocidad ajustada para exploración mística
+      function update() {
         if (moveForward !== 0 || moveSideways !== 0) {
           const rotation = camera.getAttribute('rotation');
-          // Convertimos grados a radianes
           const angleY = rotation.y * (Math.PI / 180);
 
           const pos = rig.getAttribute('position');
           
-          // Lógica de movimiento corregida respecto a la vista de cámara
-          const deltaX = moveForward * Math.sin(angleY) + moveSideways * Math.cos(angleY);
-          const deltaZ = moveForward * Math.cos(angleY) - moveSideways * Math.sin(angleY);
+          const dx = (moveForward * Math.sin(angleY) + moveSideways * Math.cos(angleY)) * speed;
+          const dz = (moveForward * Math.cos(angleY) - moveSideways * Math.sin(angleY)) * speed;
 
           rig.setAttribute('position', { 
-            x: pos.x + deltaX, 
+            x: pos.x + dx, 
             y: pos.y, 
-            z: pos.z - deltaZ // El eje Z es negativo hacia adelante en A-Frame
+            z: pos.z - dz 
           });
         }
-        requestAnimationFrame(tick);
+        requestAnimationFrame(update);
       }
-      tick();
+      update();
     </script>
   </body>
 </html>
