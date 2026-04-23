@@ -1,185 +1,173 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nocturnal Gnostic Temple VR</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.1/nipplejs.min.js"></script>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo Cero</title>
     <style>
-      body { margin: 0; overflow: hidden; background-color: #050505; }
-      #joystick-zone {
-        position: absolute;
-        bottom: 40px;
-        left: 40px;
-        width: 150px;
-        height: 150px;
-        z-index: 20;
-        touch-action: none;
-        opacity: 0.7;
-      }
-      /* Viñeta para profundidad visual nocturna */
-      .ui-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        box-shadow: inset 0 0 150px rgba(0,0,0,0.8);
-        pointer-events: none;
-        z-index: 10;
-      }
+        :root {
+            --glass: rgba(255, 255, 255, 0.1);
+            --accent: #d2b48c; /* Color Oak */
+            --bg: #0d0d0d;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Estética Glassmorphism */
+        #game-container {
+            width: 90%;
+            max-width: 400px;
+            padding: 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            min-height: 120px;
+        }
+
+        .options-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--accent);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .options-btn:active {
+            background: var(--accent);
+            color: var(--bg);
+        }
     </style>
-  </head>
-  <body>
-    <div class="ui-overlay"></div>
-    <div id="joystick-zone"></div>
+</head>
+<body>
 
-    <a-scene fog="type: exponential; color: #050505; density: 0.12" renderer="colorManagement: true; antialias: true;">
-      
-      <a-assets>
-        <img id="darkstone" src="https://www.transparenttextures.com/patterns/dark-dotted-2.png">
-      </a-assets>
+<div id="game-container">
+    <div class="stats">
+        <div>Energía: <span id="energy">100</span>%</div>
+        <div>Oxígeno: <span id="oxigen">100</span>%</div>
+    </div>
+    
+    <div id="text">Cargando sistema...</div>
+    <div id="options"></div>
+</div>
 
-      <a-entity id="rig" position="0 0 12">
-        <a-entity id="camera" camera look-controls position="0 1.6 0">
-          <a-cursor color="#ff9f43" scale="0.3 0.3 0.3" fuse="false"></a-cursor>
-        </a-entity>
-      </a-entity>
+<script>
+    let state = { energy: 100, oxigen: 100 };
 
-      <a-light type="ambient" color="#111" intensity="0.2"></a-light>
-      
-      <a-light type="directional" color="#a3bffa" intensity="0.3" position="-5 15 -5"></a-light>
-
-      <a-box position="0 -0.5 -10" width="16" height="1" depth="40" color="#222" material="src: #darkstone; repeat: 10 20" shadow="receive: true"></a-box>
-
-      <a-entity id="temple-structure">
-        
-        <a-mixin id="columna-dark" geometry="primitive: box; width: 0.6; height: 8; depth: 0.6" color="#333" material="src: #darkstone; repeat: 1 4"></a-mixin>
-        <a-mixin id="cruz-sutil" geometry="primitive: box; width: 0.1; height: 0.8; depth: 0.02" color="#ff9f43" material="emissive: #ff9f43; emissiveIntensity: 0.5"></a-mixin>
-        <a-mixin id="fuego-luz" light="type: point; color: #ff9f43; intensity: 1; distance: 10; castShadow: true" animation="property: light.intensity; from: 0.8; to: 1.2; dur: 300; loop: true; dir: alternate; easing: linear"></a-mixin>
-
-        <a-entity position="-5 4 -25">
-          <a-entity mixin="columna-dark"></a-entity>
-          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
-          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
-          <a-cylinder position="0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
-          <a-sphere position="0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
-          <a-entity mixin="fuego-luz" position="0.4 1.6 0.4"></a-entity>
-        </a-entity>
-
-        <a-entity position="-5 4 -15">
-          <a-entity mixin="columna-dark"></a-entity>
-          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
-          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
-          <a-cylinder position="0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
-          <a-sphere position="0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
-          <a-entity mixin="fuego-luz" position="0.4 1.6 0.4"></a-entity>
-        </a-entity>
-
-        <a-entity position="-5 4 -5">
-          <a-entity mixin="columna-dark"></a-entity>
-          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
-          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
-          <a-cylinder position="0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
-          <a-sphere position="0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
-          <a-entity mixin="fuego-luz" position="0.4 1.6 0.4"></a-entity>
-        </a-entity>
-
-        <a-entity position="5 4 -25">
-          <a-entity mixin="columna-dark"></a-entity>
-          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
-          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
-          <a-cylinder position="-0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
-          <a-sphere position="-0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
-          <a-entity mixin="fuego-luz" position="-0.4 1.6 0.4"></a-entity>
-        </a-entity>
-
-        <a-entity position="5 4 -15">
-          <a-entity mixin="columna-dark"></a-entity>
-          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
-          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
-          <a-cylinder position="-0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
-          <a-sphere position="-0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
-          <a-entity mixin="fuego-luz" position="-0.4 1.6 0.4"></a-entity>
-        </a-entity>
-
-        <a-entity position="5 4 -5">
-          <a-entity mixin="columna-dark"></a-entity>
-          <a-entity mixin="cruz-sutil" position="0 0 0.31"></a-entity>
-          <a-entity mixin="cruz-sutil" rotation="0 0 90" position="0 0 0.31" scale="0.6 1 1"></a-entity>
-          <a-cylinder position="-0.4 1 0.4" radius="0.05" height="0.6" color="#5d4037"></a-cylinder>
-          <a-sphere position="-0.4 1.4 0.4" radius="0.1" color="#ff9f43" material="emissive: #ff4500; emissiveIntensity: 2"></a-sphere>
-          <a-entity mixin="fuego-luz" position="-0.4 1.6 0.4"></a-entity>
-        </a-entity>
-
-        <a-box position="0 8 -15" width="10.5" height="0.3" depth="30" color="#222" opacity="0.95"></a-box>
-      </a-entity>
-
-      <a-entity id="altar-cruz" position="0 1.2 -20">
-        <a-box width="2.5" height="2.5" depth="2.5" 
-               material="color: #444; opacity: 0.1; transparent: true; metalness: 0.9; roughness: 0"
-               animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
-        </a-box>
-        
-        <a-entity id="gnostic-cross" position="0 0 0" scale="1.5 1.5 1.5" animation="property: position; y: 0.2; loop: true; dir: alternate; dur: 1500; easing: easeInOutSine">
-          <a-box width="0.2" height="2" depth="0.2" color="#ff9f43" material="emissive: #ff9f43; emissiveIntensity: 2"></a-box>
-          <a-box width="1.4" height="0.2" depth="0.2" color="#ff9f43" position="0 0.4 0" material="emissive: #ff9f43; emissiveIntensity: 2"></a-box>
-          <a-light type="point" color="#ff9f43" intensity="1.5" distance="15"></a-light>
-        </a-entity>
-      </a-entity>
-
-      <a-sky color="#000"></a-sky>
-    </a-scene>
-
-    <script>
-      // Lógica de movimiento (Mantenida de la versión anterior corregida)
-      const rig = document.querySelector('#rig');
-      const camera = document.querySelector('#camera');
-      let moveForward = 0;
-      let moveSideways = 0;
-
-      const manager = nipplejs.create({
-        zone: document.getElementById('joystick-zone'),
-        mode: 'static',
-        position: { left: '75px', bottom: '75px' },
-        color: '#ff9f43', // Color naranja fuego para el joystick
-        size: 100
-      });
-
-      manager.on('move', (evt, data) => {
-        if (data.angle) {
-          const force = data.force > 1 ? 1 : data.force;
-          const angle = data.angle.radian;
-          
-          // Lógica de dirección corregida y natural
-          moveForward = Math.sin(angle) * force; 
-          moveSideways = -Math.cos(angle) * force;
+    const storyNodes = [
+        {
+            id: 1,
+            text: "Día 1: Una tormenta electromagnética golpea el búnker. Las luces parpadean. El generador principal falla.",
+            options: [
+                {
+                    text: "Forzar generador (Gasta energía)",
+                    nextText: 2,
+                    setState: { energy: -20 }
+                },
+                {
+                    text: "Cortar ventilación (Ahorra energía, gasta oxígeno)",
+                    nextText: 3,
+                    setState: { oxigen: -30 }
+                }
+            ]
+        },
+        {
+            id: 2,
+            text: "El generador ruge y se estabiliza, pero el calor aumenta. Escuchas golpes en la escotilla exterior.",
+            options: [
+                { text: "Abrir escotilla", nextText: 4 },
+                { text: "Ignorar y asegurar sellos", nextText: 5 }
+            ]
+        },
+        {
+            id: 3,
+            text: "El silencio es absoluto. El aire se vuelve pesado. De repente, una alarma roja se activa: fuga en el sector B.",
+            options: [
+                { text: "Reparar solo", nextText: 5 },
+                { text: "Enviar dron (Gasta energía)", nextText: 6, setState: { energy: -10 } }
+            ]
         }
-      });
+        // Aquí irán más nodos...
+    ];
 
-      manager.on('end', () => {
-        moveForward = 0;
-        moveSideways = 0;
-      });
+    function startGame() {
+        showTextNode(1);
+    }
 
-      const speed = 0.18; // Velocidad ajustada para exploración mística
-      function update() {
-        if (moveForward !== 0 || moveSideways !== 0) {
-          const rotation = camera.getAttribute('rotation');
-          const angleY = rotation.y * (Math.PI / 180);
+    function showTextNode(textNodeIndex) {
+        const textNode = storyNodes.find(node => node.id === textNodeIndex);
+        document.getElementById('text').innerText = textNode.text;
+        
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
 
-          const pos = rig.getAttribute('position');
-          
-          const dx = (moveForward * Math.sin(angleY) + moveSideways * Math.cos(angleY)) * speed;
-          const dz = (moveForward * Math.cos(angleY) - moveSideways * Math.sin(angleY)) * speed;
+        textNode.options.forEach(option => {
+            const button = document.createElement('button');
+            button.innerText = option.text;
+            button.classList.add('options-btn');
+            button.addEventListener('click', () => selectOption(option));
+            optionsContainer.appendChild(button);
+        });
 
-          rig.setAttribute('position', { 
-            x: pos.x + dx, 
-            y: pos.y, 
-            z: pos.z - dz 
-          });
+        updateUI();
+    }
+
+    function selectOption(option) {
+        if (option.setState) {
+            state.energy += option.setState.energy || 0;
+            state.oxigen += option.setState.oxigen || 0;
         }
-        requestAnimationFrame(update);
-      }
-      update();
-    </script>
-  </body>
+        
+        if (state.energy <= 0 || state.oxigen <= 0) {
+            alert("SISTEMA CRÍTICO: Has muerto.");
+            location.reload();
+            return;
+        }
+
+        showTextNode(option.nextText);
+    }
+
+    function updateUI() {
+        document.getElementById('energy').innerText = state.energy;
+        document.getElementById('oxigen').innerText = state.oxigen;
+    }
+
+    startGame();
+</script>
+
+</body>
 </html>
